@@ -12,3 +12,111 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}
+
+enum PaidStatus {
+  PENDING
+  PAID
+  LATE
+}
+
+enum TransactType {
+  LOAN_DISBURSEMENT
+  LOAN_REPAYMENT
+  PENALTY
+  REFUND
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  MOBILE_MONEY
+  CARD
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+enum NotificationType {
+  LOAN_UPDATE
+  REPAYMENT_DUE
+  PAYMENT_RECEIVED
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  firstName      String?
+  lastName       String?
+  email          String   @unique
+  password       String?
+  profilePicture String?
+  role           Role     @default(USER)
+  creditScore    Int      @default(0)
+  createdAt      DateTime
+  updatedAt      DateTime
+
+  Loan    Loans[]
+  Payment Payment[]
+}
+
+model Loans {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  user               User     @relation(fields: [userId], references: [id])
+  amount             Float
+  interest_rate      Float
+  tenure_months      Int
+  status             Status
+  repayment_schedule Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  Payment Payment[]
+}
+
+model Payment {
+  id          Int        @id @default(autoincrement())
+  loanId      Int
+  userId      Int
+  loan        Loans      @relation(fields: [loanId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
+  amount_paid Float
+  due_date    DateTime
+  paid_on     DateTime
+  status      PaidStatus
+  createdAt   DateTime   @default(now())
+}
+
+model Transaction {
+  id                    Int               @id @default(autoincrement())
+  user_id               Int
+  loan_id               Int
+  transaction           TransactType
+  amount                Float
+  payment_method        PaymentMethod
+  transaction_reference String
+  status                TransactionStatus
+  createdAt             DateTime          @default(now())
+}
+
+model Notification {
+  id               Int              @id @default(autoincrement())
+  user_id          Int
+  message          String
+  notificationType NotificationType
+  is_read          Boolean          @default(false)
+  createdAt        DateTime
+}

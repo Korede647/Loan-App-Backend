@@ -65,8 +65,8 @@ model User {
   profilePicture String?
   role           Role     @default(USER)
   creditScore    Int      @default(0)
-  createdAt      DateTime
-  updatedAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   Loan         Loans[]
   Payment      Payment[]

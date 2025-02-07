@@ -68,8 +68,10 @@ model User {
   createdAt      DateTime
   updatedAt      DateTime
 
-  Loan    Loans[]
-  Payment Payment[]
+  Loan         Loans[]
+  Payment      Payment[]
+  Transaction  Transaction[]
+  Notification Notification[]
 }
 
 model Loans {
@@ -84,7 +86,8 @@ model Loans {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  Payment Payment[]
+  Payment     Payment[]
+  Transaction Transaction[]
 }
 
 model Payment {
@@ -104,6 +107,8 @@ model Transaction {
   id                    Int               @id @default(autoincrement())
   user_id               Int
   loan_id               Int
+  user                  User              @relation(fields: [user_id], references: [id])
+  loan                  Loans             @relation(fields: [loan_id], references: [id])
   transaction           TransactType
   amount                Float
   payment_method        PaymentMethod
@@ -115,6 +120,7 @@ model Transaction {
 model Notification {
   id               Int              @id @default(autoincrement())
   user_id          Int
+  user             User             @relation(fields: [user_id], references: [id])
   message          String
   notificationType NotificationType
   is_read          Boolean          @default(false)

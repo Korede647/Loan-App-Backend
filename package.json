@@ -1,4 +1,19 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "prisma": {
+    "seed": "ts-node --require esbuild-register src/seeds/seed.ts"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "generate": "npx prisma generate",
+    "deploy": "npx generate && npx build",
+    "migrate": "npx prisma migrate deploy && node dist/seeds/seed.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@prisma/client": "^6.3.1",
     "@react-email/components": "^0.0.32",
@@ -20,6 +35,7 @@
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "prisma": "^6.3.1"
@@ -34,12 +50,6 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
-  },
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

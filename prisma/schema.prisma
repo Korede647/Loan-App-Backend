@@ -85,10 +85,10 @@ model Loans {
   userId             Int
   user               User     @relation(fields: [userId], references: [id])
   amount             Float
-  interest_rate      Float
+  interest_rate      Float?
   tenure_months      Int
-  status             Status
-  repayment_schedule Json
+  status             Status? @default(PENDING)
+  repayment_schedule Json?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

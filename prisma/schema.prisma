@@ -57,17 +57,22 @@ enum NotificationType {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  firstName      String?
-  lastName       String?
-  email          String   @unique
-  password       String?
-  profilePicture String?
-  role           Role     @default(USER)
-  creditScore    Int      @default(0)
-  googleId String? @unique
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                       Int       @id @default(autoincrement())
+  firstName                String?
+  lastName                 String?
+  email                    String    @unique
+  password                 String?
+  profilePicture           String?
+  role                     Role      @default(USER)
+  creditScore              Int?       @default(0)
+  googleId                 String?   @unique
+  emailVerified            Boolean?  @default(false)
+  otp                      String?
+  otpExpiry                DateTime? @default(now())
+  resetPasswordToken       String?
+  resetPasswordTokenExpiry DateTime? @default(now())
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   Loan         Loans[]
   Payment      Payment[]

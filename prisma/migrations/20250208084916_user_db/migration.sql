@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "otp" TEXT,
+ADD COLUMN     "otpExpiry" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "resetPasswordToken" TEXT,
+ADD COLUMN     "resetPasswordTokenExpiry" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP;

@@ -31,25 +31,48 @@ export class UserServiceImpl implements UserService{
         })
         return user;
     }
-    getUserById(id: number): Promise<User | null> {
+   async getUserById(id: number): Promise<User | null> {
+        const user = await db.user.findUnique({
+            where: {
+                id,
+            }
+        })
+        if(!user){
+            throw new CustomError(StatusCodes.NOT_FOUND, `User with ${id} does not exist.`)
+        }
+        return user
+    }
+    async getAllUsers(): Promise<User[]> {
+        return await db.user.findMany()
+    }
+    async updateUser(id: number, data: Partial<CreateUserDTO>): Promise<User> {
+        const user = await db.user.findUnique({
+            where: {
+                id
+            }
+        })
+        if(!user){
+            throw new CustomError(  StatusCodes.NOT_FOUND, "User does not exist")
+        }
+        await db.user.update({
+            where: {
+                id,
+            },
+            data
+            
+        })
         throw new Error("Method not implemented.");
     }
-    getAllUsers(): Promise<User[]> {
+    async deleteUser(id: number): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    updateUser(id: number, data: Partial<CreateUserDTO>): Promise<User> {
+    async profile(id: number): Promise<Omit<User, "password">> {
         throw new Error("Method not implemented.");
     }
-    deleteUser(id: number): Promise<void> {
+    async setPassword(id: number, data: ChangePasswordDTO): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    profile(id: number): Promise<Omit<User, "password">> {
-        throw new Error("Method not implemented.");
-    }
-    setPassword(id: number, data: ChangePasswordDTO): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    updateProfilePic(id: number, data: { profilePic: string; }): Promise<Object | any> {
+    async updateProfilePic(id: number, data: { profilePic: string; }): Promise<Object | any> {
         throw new Error("Method not implemented.");
     }
 

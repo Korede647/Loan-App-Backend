@@ -22,4 +22,46 @@ export class UserController{
             next(error)
         }
     }
+
+    public getUserById = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try{
+            const userId = parseInt(req.params.id)
+            const userData = await this.userService.getUserById(userId)
+            res.status(200).json(userData)
+        }catch(error){
+            next(error)
+        }
+    }
+
+    public getAllUsers = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try{
+            const allUsers = await this.userService.getAllUsers()
+            res.status(200).json(allUsers)
+        }catch(error){
+            next(error)
+        }
+    }
+
+    public updateUser = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try{
+            const userId = parseInt(req.params.id)
+            const userData = req.body as Partial<CreateUserDTO>
+            const user = await this.userService.updateUser(userId, userData)
+            res.status(201).json(user)
+        }catch(error){
+            next(error)
+        }
+    }
 }

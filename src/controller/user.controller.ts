@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UserServiceImpl } from "../service/impl/user.service.impl";
 import { CreateUserDTO } from "../dto/createUser.dto";
+import { ChangePasswordDTO } from "../dto/resetPassword.dto";
 
 export class UserController{
     private userService: UserServiceImpl;
@@ -63,5 +64,48 @@ export class UserController{
         }catch(error){
             next(error)
         }
+    }
+
+    public deleteUser = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try{
+            const userId = parseInt(req.params.id)
+            const userData = await this.userService.deleteUser(userId)
+            res.status(200).json(userData)
+        }catch(error){
+            next(error)
+        }
+    }
+
+    public setPassword = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        // try{
+        //     const userId = parseInt(req.params.id)
+        //     const userData = req.body as ChangePasswordDTO
+        //     const user = await this.userService.setPassword(userId, userData)
+        //     res.status(201).json({
+                //  error: false
+                // message: "Password Changed successfully"
+            // })
+        // }catch(error){
+        //     next(error)
+        // }
+    }
+
+    public updateProfilePic = async(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        // try{
+        //     const userId = parseInt(req.params.id)
+        //     const userPic = req.
+        // }
     }
 }

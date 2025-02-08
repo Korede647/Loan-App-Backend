@@ -4,10 +4,14 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./config/passport.config"
+import "dotenv/config"
 import { errorHandler } from "./utils/errorHandler.util";
+import userRoutes from "./routes/user.route";
+import authRoutes from "./routes/auth.route";
 
 
 dotenv.config()
+
 const portEnv = process.env.PORT;
 if(!portEnv){
     console.error("Error: PORT is not defined in .env file");
@@ -43,7 +47,8 @@ app.use(passport.session())
 app.use(cors(corsOptions));
 app.use(express.json())
 
-// app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users", userRoutes)
+app.use("/api/v1/auth", authRoutes)
 
 app.use(errorHandler)
 

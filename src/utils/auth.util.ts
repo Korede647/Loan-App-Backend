@@ -1,13 +1,15 @@
-// import Jwt  from "jsonwebtoken"
+import Jwt  from "jsonwebtoken"
 
-//  export const generateAccessToken =(userId: number, name: string): string  =>{
-//             return Jwt.sign({id: userId, name}, process.env.JWT_SECRET || "", {
-//                 expiresIn: process.env.JWT_ACCESS_EXPIRES, 
-//             });
-//         }
+ export const generateAccessToken =(userId: number, name: string): string  =>{
+    const expiresIn: any = process.env.JWT_ACCESS_EXPIRES || "2h";
+            return Jwt.sign({id: userId, name}, process.env.JWT_SECRET || "", {
+                expiresIn, 
+            });
+        }
 
-//   export const generateRefreshToken =(userId: number, name: string): string =>{
-//             return Jwt.sign({id: userId, name}, process.env.JWT_SECRET || "", {
-//                 expiresIn: process.env.JWT_REFRESH_EXPIRES
-//             })
-//         }
+  export const generateRefreshToken =(userId: number, name: string): string =>{
+    const expiresIn: any = process.env.JWT_ACCESS_EXPIRES || "2h";
+            return Jwt.sign({id: userId, name}, process.env.JWT_SECRET || "", {
+                expiresIn,
+            })
+        }

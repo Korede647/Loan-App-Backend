@@ -55,6 +55,7 @@ enum NotificationType {
   LOAN_UPDATE
   REPAYMENT_DUE
   PAYMENT_RECEIVED
+  PAYMENT_FAILED
 }
 
 model User {

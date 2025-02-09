@@ -10,9 +10,11 @@ import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import loanRoutes from "./routes/loan.route";
 import notifyRoutes from "./routes/notification.route";
+import { repayLoanCron } from "./cronJob/payment.cronJob";
 
 
 dotenv.config()
+repayLoanCron()
 
 const portEnv = process.env.PORT;
 if(!portEnv){

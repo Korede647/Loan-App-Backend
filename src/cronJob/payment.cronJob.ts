@@ -1,15 +1,20 @@
 
 import cron from "node-cron";
 import { db } from '../config/db';
+import { NotificationService } from "../service/notification.service";
+import { NotificationServiceImpl } from "../service/impl/notification.service.impl";
+import { CreateNotificationDTO } from "../dto/createNotification.dto";
+import { log } from "console";
 
+const notificationService = new NotificationServiceImpl()
+ export const repayLoanCron = () =>{
 
-const repayLoanCron = () =>{
-
-    const REPAY_LOAN_CRON = "0 1 * * *";
+    const REPAY_LOAN_CRON = " 0 1 * * *";
 
     cron.schedule(REPAY_LOAN_CRON, async () => {
+        console.log("Starting Cron Job for Payment of Loans");
+        
 
-    })
 async function processPayment(repayment: any): Promise<boolean> {
   // Simulate a delay as if calling an external payment service.
   return new Promise((resolve) => {
@@ -20,9 +25,9 @@ async function processPayment(repayment: any): Promise<boolean> {
   });
 }
 
-/**
- * Processes all pending repayments whose due date is up (or past).
- */
+
+ // Process all pending repayments whose due date is up (or past).
+
 async function processAutoPayments(): Promise<void> {
   const now = new Date();
   console.log(`Auto-payment job running at: ${now.toISOString()}`);
@@ -43,8 +48,6 @@ async function processAutoPayments(): Promise<void> {
       return;
     }
 
-    // const notificationService = new NotificationServiceImpl();
-
     for (const repayment of pendingRepayments) {
       try {
         console.log(`Processing repayment ${repayment.id} for user ${repayment.userId}`);
@@ -62,29 +65,32 @@ async function processAutoPayments(): Promise<void> {
             },
           });
 
-          // Create a corresponding transaction record.
+          // Create a transaction record.
           await db.transaction.create({
             data: {
-              loanId: repayment.loanId,
-              userId: repayment.userId,
+              loan_id: repayment.loanId,
+              user_id: repayment.userId,
               transaction: "LOAN_REPAYMENT",
               amount: repayment.amount_paid,
-              payment_method: "",
+            //   payment_method: "",
               transaction_reference: `TXN-${Date.now()}`,
               status: "SUCCESSFUL",
             },
           });
 
           // Send a notification to the user.
-          await Notif.createNotification(
+          const body : CreateNotificationDTO = {
+            message: `Your payment for repayment ${repayment.id} has been successfully processed.`,
+            notificationType: "PAYMENT_RECEIVED"
+          }
+          await  notificationService.createNotification(
             repayment.userId,
-            `Your auto-payment for repayment ${repayment.id} has been successfully processed.`,
-            'auto_payment_success'
+            body
           );
 
           console.log(`Repayment ${repayment.id} processed successfully.`);
         } else {
-          // Optionally update the repayment status to "failed" if payment failed.
+          // update the repayment status to "failed" if payment failed.
           await db.payment.update({
             where: { id: repayment.id },
             data: {
@@ -92,10 +98,13 @@ async function processAutoPayments(): Promise<void> {
             },
           });
 
+          const body2 : CreateNotificationDTO = {
+            message:  `Your auto-payment for repayment ${repayment.id} failed. Please check your payment method.`,
+            notificationType: "PAYMENT_FAILED"
+          }
           await notificationService.createNotification(
             repayment.userId,
-            `Your auto-payment for repayment ${repayment.id} failed. Please check your payment method.`,
-            'auto_payment_failed'
+            body2
           );
 
           console.log(`Repayment ${repayment.id} failed during processing.`);
@@ -109,4 +118,5 @@ async function processAutoPayments(): Promise<void> {
   }
 }
 
-}
+})
+ }

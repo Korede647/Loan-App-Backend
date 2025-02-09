@@ -64,7 +64,7 @@ model User {
   password                 String?
   profilePicture           String?
   role                     Role      @default(USER)
-  creditScore              Int?       @default(0)
+  creditScore              Int?      @default(0)
   googleId                 String?   @unique
   emailVerified            Boolean?  @default(false)
   otp                      String?
@@ -87,7 +87,9 @@ model Loans {
   amount             Float
   interest_rate      Float?
   tenure_months      Int
-  status             Status? @default(PENDING)
+  status             Status?  @default(PENDING)
+  totalAmtDue        Decimal?
+  monthlyPay         Decimal?
   repayment_schedule Json?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -103,7 +105,7 @@ model Payment {
   loan        Loans      @relation(fields: [loanId], references: [id])
   user        User       @relation(fields: [userId], references: [id])
   amount_paid Float
-  due_date    DateTime
+  due_date    DateTime?
   paid_on     DateTime
   status      PaidStatus
   createdAt   DateTime   @default(now())

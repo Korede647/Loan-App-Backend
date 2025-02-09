@@ -81,7 +81,18 @@ export class UserServiceImpl implements UserService {
     });
   }
   async profile(id: number): Promise<Omit<User, "password">> {
-    throw new Error("Method not implemented.");
+    const user = await db.user.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!user) {
+      throw new CustomError(
+        StatusCodes.NOT_FOUND,
+        `user with id ${id} not found`
+      );
+    }
+    return user;
   }
   async setPassword(id: number, data: ChangePasswordDTO): Promise<void> {
     await db.$transaction(async (transaction) => {

@@ -1,115 +1,112 @@
-// // src/autoPaymentCron.ts
-// import cron from 'node-cron';
-// import { prisma } from './utils/prisma';
-// import { NotificationServiceImpl } from './services/NotificationServiceImpl';
 
-// /**
-//  * Simulates processing a payment.
-//  * In production, replace this with an actual integration with a payment gateway.
-//  *
-//  * @param repayment - The repayment record to process.
-//  * @returns A Promise that resolves to true if payment is successful.
-//  */
-// async function processPayment(repayment: any): Promise<boolean> {
-//   // Simulate a delay as if calling an external payment service.
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       // For this example, we assume payment is always successful.
-//       resolve(true);
-//     }, 500);
-//   });
-// }
+import cron from "node-cron";
+import { db } from '../config/db';
 
-// /**
-//  * Processes all pending repayments whose due date is up (or past).
-//  */
-// async function processAutoPayments(): Promise<void> {
-//   const now = new Date();
-//   console.log(`Auto-payment job running at: ${now.toISOString()}`);
 
-//   try {
-//     // Find all repayments that are pending and due (or past due).
-//     const pendingRepayments = await prisma.repayment.findMany({
-//       where: {
-//         status: 'pending',
-//         dueDate: {
-//           lte: now,
-//         },
-//       },
-//     });
+const repayLoanCron = () =>{
 
-//     if (pendingRepayments.length === 0) {
-//       console.log("No repayments to process at this time.");
-//       return;
-//     }
+    const REPAY_LOAN_CRON = "0 1 * * *";
 
-//     const notificationService = new NotificationServiceImpl();
+    cron.schedule(REPAY_LOAN_CRON, async () => {
 
-//     for (const repayment of pendingRepayments) {
-//       try {
-//         console.log(`Processing repayment ${repayment.id} for user ${repayment.userId}`);
+    })
+async function processPayment(repayment: any): Promise<boolean> {
+  // Simulate a delay as if calling an external payment service.
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // For this example, we assume payment is always successful.
+      resolve(true);
+    }, 500);
+  });
+}
 
-//         // Process the payment (simulate payment gateway call)
-//         const paymentSuccess = await processPayment(repayment);
+/**
+ * Processes all pending repayments whose due date is up (or past).
+ */
+async function processAutoPayments(): Promise<void> {
+  const now = new Date();
+  console.log(`Auto-payment job running at: ${now.toISOString()}`);
 
-//         if (paymentSuccess) {
-//           // Update the repayment record as paid.
-//           await prisma.repayment.update({
-//             where: { id: repayment.id },
-//             data: {
-//               status: 'paid',
-//               paidOn: new Date(),
-//             },
-//           });
+  try {
+    // Find all repayments that are pending and due (or past due).
+    const pendingRepayments = await db.payment.findMany({
+      where: {
+        status: 'PENDING',
+        due_date: {
+          lte: now,
+        },
+      },
+    });
 
-//           // Create a corresponding transaction record.
-//           await prisma.transaction.create({
-//             data: {
-//               loanId: repayment.loanId,
-//               userId: repayment.userId,
-//               type: 'loan_repayment',
-//               amount: repayment.amountPaid,
-//               payment_method: 'auto_debit',
-//               transaction_reference: `TXN-${Date.now()}`,
-//               status: 'successful',
-//             },
-//           });
+    if (pendingRepayments.length === 0) {
+      console.log("No repayments to process at this time.");
+      return;
+    }
 
-//           // Send a notification to the user.
-//           await notificationService.createNotification(
-//             repayment.userId,
-//             `Your auto-payment for repayment ${repayment.id} has been successfully processed.`,
-//             'auto_payment_success'
-//           );
+    // const notificationService = new NotificationServiceImpl();
 
-//           console.log(`Repayment ${repayment.id} processed successfully.`);
-//         } else {
-//           // Optionally update the repayment status to "failed" if payment failed.
-//           await prisma.repayment.update({
-//             where: { id: repayment.id },
-//             data: {
-//               status: 'failed',
-//             },
-//           });
+    for (const repayment of pendingRepayments) {
+      try {
+        console.log(`Processing repayment ${repayment.id} for user ${repayment.userId}`);
 
-//           await notificationService.createNotification(
-//             repayment.userId,
-//             `Your auto-payment for repayment ${repayment.id} failed. Please check your payment method.`,
-//             'auto_payment_failed'
-//           );
+        // Process the payment (simulate payment gateway call)
+        const paymentSuccess = await processPayment(repayment);
 
-//           console.log(`Repayment ${repayment.id} failed during processing.`);
-//         }
-//       } catch (innerError) {
-//         console.error(`Error processing repayment ${repayment.id}:`, innerError);
-//       }
-//     }
-//   } catch (error) {
-//     console.error("Error in auto-payment cron job:", error);
-//   }
-// }
+        if (paymentSuccess) {
+          // Update the repayment record as paid.
+          await db.payment.update({
+            where: { id: repayment.id },
+            data: {
+              status: "PAID",
+              paid_on: new Date(),
+            },
+          });
 
-// // Schedule the cron job to run daily at 1 AM (server time).
-// cron.schedule('0 1 * * *', async () => {
-//   await processAutoPayments();
-// });
+          // Create a corresponding transaction record.
+          await db.transaction.create({
+            data: {
+              loanId: repayment.loanId,
+              userId: repayment.userId,
+              transaction: "LOAN_REPAYMENT",
+              amount: repayment.amount_paid,
+              payment_method: "",
+              transaction_reference: `TXN-${Date.now()}`,
+              status: "SUCCESSFUL",
+            },
+          });
+
+          // Send a notification to the user.
+          await Notif.createNotification(
+            repayment.userId,
+            `Your auto-payment for repayment ${repayment.id} has been successfully processed.`,
+            'auto_payment_success'
+          );
+
+          console.log(`Repayment ${repayment.id} processed successfully.`);
+        } else {
+          // Optionally update the repayment status to "failed" if payment failed.
+          await db.payment.update({
+            where: { id: repayment.id },
+            data: {
+              status: "FAILED",
+            },
+          });
+
+          await notificationService.createNotification(
+            repayment.userId,
+            `Your auto-payment for repayment ${repayment.id} failed. Please check your payment method.`,
+            'auto_payment_failed'
+          );
+
+          console.log(`Repayment ${repayment.id} failed during processing.`);
+        }
+      } catch (innerError) {
+        console.error(`Error processing repayment ${repayment.id}:`, innerError);
+      }
+    }
+  } catch (error) {
+    console.error("Error in auto-payment cron job:", error);
+  }
+}
+
+}

@@ -29,6 +29,7 @@ enum PaidStatus {
   PENDING
   PAID
   LATE
+  FAILED
 }
 
 enum TransactType {
@@ -119,7 +120,7 @@ model Transaction {
   loan                  Loans             @relation(fields: [loan_id], references: [id])
   transaction           TransactType
   amount                Float
-  payment_method        PaymentMethod
+  payment_method        PaymentMethod?
   transaction_reference String
   status                TransactionStatus
   createdAt             DateTime          @default(now())

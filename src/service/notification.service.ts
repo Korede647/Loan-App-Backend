@@ -3,8 +3,8 @@ import { CreateNotificationDTO } from "../dto/createNotification.dto";
 
 export interface NotificationService {
 
-    createNotification(userId: string, data: CreateNotificationDTO): Promise<any>;
-    getNotifications(userId: string): Promise<Notification[]>;
-    markNotificationAsRead(notificationId: string): Promise<any>;
+    createNotification(userId: number, data: CreateNotificationDTO): Promise<any>;
+    getNotifications(userId: number): Promise<Notification[]>;
+    markNotificationAsRead(notificationId: number): Promise<Notification>;
   }
   

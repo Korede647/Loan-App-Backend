@@ -9,6 +9,7 @@ import { errorHandler } from "./utils/errorHandler.util";
 import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import loanRoutes from "./routes/loan.route";
+import notifyRoutes from "./routes/notification.route";
 
 
 dotenv.config()
@@ -51,6 +52,7 @@ app.use(express.json())
 app.use("/api/v1/users", userRoutes)
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/loans", loanRoutes)
+app.use("/api/v1/notifications", notifyRoutes)
 
 app.use(errorHandler)
 

@@ -42,7 +42,6 @@ enum TransactType {
 
 enum PaymentMethod {
   BANK_TRANSFER
-  MOBILE_MONEY
   CARD
 }
 
@@ -64,6 +63,7 @@ model User {
   firstName                String?
   lastName                 String?
   email                    String    @unique
+  phoneNumber              String
   password                 String?
   profilePicture           String?
   role                     Role      @default(USER)
@@ -71,9 +71,9 @@ model User {
   googleId                 String?   @unique
   emailVerified            Boolean?  @default(false)
   otp                      String?
-  otpExpiry                DateTime? 
+  otpExpiry                DateTime?
   resetPasswordToken       String?
-  resetPasswordTokenExpiry DateTime? 
+  resetPasswordTokenExpiry DateTime?
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 
@@ -84,18 +84,19 @@ model User {
 }
 
 model Loans {
-  id                 Int      @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement())
   userId             Int
-  user               User     @relation(fields: [userId], references: [id])
+  user               User           @relation(fields: [userId], references: [id])
   amount             Float
   interest_rate      Float?
   tenure_months      Int
-  status             Status?  @default(NOLOAN)
+  status             Status?        @default(NOLOAN)
   totalAmtDue        Decimal?
   monthlyPay         Decimal?
   repayment_schedule Json?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  payment_method     PaymentMethod
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 
   Payment     Payment[]
   Transaction Transaction[]
@@ -122,7 +123,6 @@ model Transaction {
   loan                  Loans             @relation(fields: [loan_id], references: [id])
   transaction           TransactType
   amount                Float
-  payment_method        PaymentMethod?
   transaction_reference String
   status                TransactionStatus
   createdAt             DateTime          @default(now())

@@ -41,6 +41,7 @@ export class LoanServiceImpl implements LoanService{
                 amount: data.amount,
                 interest_rate: interestRate,
                 tenure_months: data.tenure_months,
+                payment_method: data.payment_method,
                 totalAmtDue: totalDue,
                 monthlyPay: monthlyPayment,
                 repayment_schedule: schedule,

@@ -24,6 +24,7 @@ export class UserServiceImpl implements UserService {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
         password: await hashPassword(data.password),
         role: data.role,
         creditScore: data.creditScore,

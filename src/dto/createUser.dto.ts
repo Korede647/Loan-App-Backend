@@ -14,6 +14,10 @@ export class CreateUserDTO {
     email!: string;
 
     @IsNotEmpty()
+    @Length(11, 11)
+    phoneNumber!: string
+
+    @IsNotEmpty()
     @Length(6, 20)
     password!: string;
 

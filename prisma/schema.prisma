@@ -19,7 +19,6 @@ enum Role {
 }
 
 enum Status {
-  NOLOAN
   PENDING
   APPROVED
   REJECTED
@@ -63,7 +62,7 @@ model User {
   firstName                String?
   lastName                 String?
   email                    String    @unique
-  phoneNumber              String
+  phoneNumber              String?
   password                 String?
   profilePicture           String?
   role                     Role      @default(USER)
@@ -90,7 +89,7 @@ model Loans {
   amount             Float
   interest_rate      Float?
   tenure_months      Int
-  status             Status?        @default(NOLOAN)
+  status             Status?        @default(PENDING)
   totalAmtDue        Decimal?
   monthlyPay         Decimal?
   repayment_schedule Json?

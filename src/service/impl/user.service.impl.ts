@@ -58,13 +58,13 @@ export class UserServiceImpl implements UserService {
     if (!user) {
       throw new CustomError(StatusCodes.NOT_FOUND, "User does not exist");
     }
-    await db.user.update({
+    const updatedUser = await db.user.update({
       where: {
         id,
       },
       data,
     });
-    throw new Error("Method not implemented.");
+    return updatedUser
   }
   async deleteUser(id: number): Promise<void> {
     const user = await db.user.findUnique({

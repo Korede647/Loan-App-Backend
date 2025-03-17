@@ -16,7 +16,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
          try{
-            const userId = parseInt(req.params.id)
+            const userId = parseInt(req.params.loanId)
             const loanData = req.body as CreateLoanDTO
             const loan = await this.loanService.applyLoan(userId, loanData)
             res.status(201).json({
@@ -34,7 +34,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
         try{
-            const loanId = parseInt(req.params.id)
+            const loanId = parseInt(req.params.loanId)
             const loan = await this.loanService.getLoanById(loanId)
             res.status(200).json(loan)
         }catch(error){
@@ -48,7 +48,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
         try{
-            const userId = parseInt(req.params.id)
+            const userId = parseInt(req.params.loanId)
             const loan = await this.loanService.getLoansForUser(userId)
             res.status(200).json(loan)
         }catch(error){
@@ -75,7 +75,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
         try{
-            const loanId = parseInt(req.params.id)
+            const loanId = parseInt(req.params.loanId)
             const loanData = await this.loanService.approveLoan(loanId)
             res.status(200).json(loanData)
         }catch(error){
@@ -89,7 +89,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
         try{
-            const loanId = parseInt(req.params.id)
+            const loanId = parseInt(req.params.loanId)
             const loanData = await this.loanService.rejectLoan(loanId)
             res.status(200).json(loanData)
         }catch(error){
@@ -103,7 +103,7 @@ export class LoanController{
         next: NextFunction
     ): Promise<void> => {
         try{
-            const loanId = parseInt(req.params.id)
+            const loanId = parseInt(req.params.loanId)
             const userId = parseInt(req.params.id)
             const amt = parseFloat(req.params.amount)
             const loanData = await this.loanService.recordLoanPayment(loanId, userId, amt)
